@@ -32,22 +32,25 @@ function Payment() {
     getClientSecret();
   }, [basket]);
 
+  console.log("The SECRET IS >>>", clientSecret);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setProccessing(true);
 
     const payload = await stripe
-      .confirmCardPayment(setClientSecret, {
+      .confirmCardPayment(clientSecret, {
         payment_method: {
           card: elements.getElement(CardElement),
         },
       })
       .then(({ paymentIntent }) => {
+        // Handle the payment confirmation result in your application
         setSucceeded(true);
         setError(null);
         setProccessing(false);
 
-        navigate.replace("/orders");
+        navigate("/orders", { replace: true });
       });
   };
 
