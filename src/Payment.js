@@ -122,7 +122,7 @@ function Payment() {
                 <CurrencyFormat
                   renderText={(value) => <h3>Order Total: {value}</h3>}
                   decimalScale={2}
-                  value={getBasketTotal(basket) / 100}
+                  value={getBasketTotal(basket)}
                   displayType={"text"}
                   thousandSeparator={true}
                   prefix={"$"}

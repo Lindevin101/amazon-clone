@@ -20,12 +20,13 @@ function Order({ order }) {
           image={item.image}
           price={item.price}
           rating={item.rating}
+          hideButton
         />
       ))}
       <CurrencyFormat
         renderText={(value) => <h3>Order Total: {value}</h3>}
         decimalScale={2}
-        value={getBasketTotal(order.data.basket) / 100}
+        value={getBasketTotal(order.data.basket)}
         displayType={"text"}
         thousandSeparator={true}
         prefix={"$"}
