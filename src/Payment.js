@@ -50,6 +50,10 @@ function Payment() {
         setError(null);
         setProccessing(false);
 
+        dispatch({
+          type: "EMPTY_BASKET",
+        });
+
         navigate("/orders", { replace: true });
       });
   };
