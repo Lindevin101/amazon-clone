@@ -7,6 +7,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { getBasketTotal } from "./reducer";
 import CurrencyFormat from "react-currency-format";
+import { db } from "./firebase";
+import { doc, setDoc } from "firebase/firestore";
 
 function Payment() {
   const [{ basket, user }, dispatch] = useStateValue();
@@ -16,12 +18,13 @@ function Payment() {
   const elements = useElements();
 
   const [succeeded, setSucceeded] = useState(false);
-  const [processing, setProccessing] = useState("");
+  const [processing, setProcessing] = useState("");
   const [error, setError] = useState(null);
   const [disabled, setDisabled] = useState(true);
-  const [clientSecret, setClientSecret] = useState(true);
+  const [clientSecret, setClientSecret] = useState("");
 
   useEffect(() => {
+    // Generate the Stripe clientSecret whenever the basket changes
     const getClientSecret = async () => {
       const response = await axios({
         method: "post",
@@ -29,14 +32,13 @@ function Payment() {
       });
       setClientSecret(response.data.clientSecret);
     };
+
     getClientSecret();
   }, [basket]);
 
-  console.log("The SECRET IS >>>", clientSecret);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setProccessing(true);
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setProcessing(true);
 
     const payload = await stripe
       .confirmCardPayment(clientSecret, {
@@ -44,44 +46,55 @@ function Payment() {
           card: elements.getElement(CardElement),
         },
       })
-      .then(({ paymentIntent }) => {
-        // Handle the payment confirmation result in your application
-        setSucceeded(true);
-        setError(null);
-        setProccessing(false);
+      .then(async ({ paymentIntent }) => {
+        if (user && user.uid && paymentIntent) {
+          await setDoc(doc(db, "users", user.uid, "orders", paymentIntent.id), {
+            basket: basket,
+            amount: paymentIntent.amount,
+            created: paymentIntent.created,
+          });
 
-        dispatch({
-          type: "EMPTY_BASKET",
-        });
-
-        navigate("/orders", { replace: true });
+          setSucceeded(true);
+          setError(null);
+          setProcessing(false);
+          dispatch({ type: "EMPTY_BASKET" });
+          navigate("/orders", { replace: true });
+        } else {
+          console.error("User or Payment Intent is undefined");
+          setError("An error occurred during the payment process.");
+          setProcessing(false);
+        }
       });
   };
 
-  const handleChange = (e) => {
-    setDisabled(e.empty);
-    setError(e.error ? e.error.message : "");
+  const handleChange = (event) => {
+    setDisabled(event.empty);
+    setError(event.error ? event.error.message : "");
   };
 
   return (
     <div className="payment">
       <div className="payment__container">
         <h1>
-          Checkout(<Link to="/checkout">{basket?.length}</Link>)
+          Checkout (<Link to="/checkout">{basket?.length} items</Link>)
         </h1>
+
+        {/* Payment section - delivery address */}
         <div className="payment__section">
           <div className="payment__title">
             <h3>Delivery Address</h3>
           </div>
           <div className="payment__address">
             <p>{user?.email}</p>
-            <p>123 Everywhere Lane</p>
-            <p>New York, NY</p>
+            <p>123 React Lane</p>
+            <p>Los Angeles, CA</p>
           </div>
         </div>
+
+        {/* Payment section - Review Items */}
         <div className="payment__section">
           <div className="payment__title">
-            <h3> Review Items and Delivery</h3>
+            <h3>Review items and delivery</h3>
           </div>
           <div className="payment__items">
             {basket.map((item) => (
@@ -95,6 +108,8 @@ function Payment() {
             ))}
           </div>
         </div>
+
+        {/* Payment section - Payment method */}
         <div className="payment__section">
           <div className="payment__title">
             <h3>Payment Method</h3>
@@ -102,13 +117,10 @@ function Payment() {
           <div className="payment__details">
             <form onSubmit={handleSubmit}>
               <CardElement onChange={handleChange} />
+
               <div className="payment__priceContainer">
                 <CurrencyFormat
-                  renderText={(value) => (
-                    <>
-                      <h3>Order Total: {value}</h3>
-                    </>
-                  )}
+                  renderText={(value) => <h3>Order Total: {value}</h3>}
                   decimalScale={2}
                   value={getBasketTotal(basket)}
                   displayType={"text"}
@@ -119,6 +131,7 @@ function Payment() {
                   <span>{processing ? <p>Processing</p> : "Buy Now"}</span>
                 </button>
               </div>
+
               {error && <div>{error}</div>}
             </form>
           </div>
