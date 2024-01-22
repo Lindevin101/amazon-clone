@@ -47,6 +47,8 @@ npm install
 After running `npm start`, the project will be running on `localhost:3000` by default. You can:
 
 - Browse products
+- <img width="1440" alt="Screenshot 2024-01-22 at 4 53 56 PM" src="https://github.com/Lindevin101/amazon-clone/assets/145355507/17ba5aa2-00fa-4ecf-9ea8-70653fa4ef2a">
+
 - Add products to the basket
 - Sign in / Sign up
 - Proceed to checkout
