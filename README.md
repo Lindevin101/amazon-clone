@@ -49,10 +49,14 @@ After running `npm start`, the project will be running on `localhost:3000` by de
 - Browse products
 - <img width="1440" alt="Screenshot 2024-01-22 at 4 53 56 PM" src="https://github.com/Lindevin101/amazon-clone/assets/145355507/17ba5aa2-00fa-4ecf-9ea8-70653fa4ef2a">
 
-- Add products to the basket
-- Sign in / Sign up
-- Proceed to checkout
-- Make a payment (test mode)
+- Add products to the basket<img width="1440" alt="Screenshot 2024-01-22 at 4 49 46 PM" src="https://github.com/Lindevin101/amazon-clone/assets/145355507/42477687-43c4-44ea-b95e-5a17174cc348">
+
+- Sign in / Sign up<img width="1440" alt="Screenshot 2024-01-22 at 4 52 13 PM" src="https://github.com/Lindevin101/amazon-clone/assets/145355507/368e44b7-d18d-4e7c-9e91-fc87ade3be23">
+
+- Proceed to checkout/Make payment (test mode) <img width="1440" alt="Screenshot 2024-01-22 at 4 49 57 PM" src="https://github.com/Lindevin101/amazon-clone/assets/145355507/14882e3b-04c0-45e6-9fab-393a5dfde63b">
+
+- Order history<img width="1440" alt="Screenshot 2024-01-22 at 4 50 16 PM" src="https://github.com/Lindevin101/amazon-clone/assets/145355507/6d729661-0880-499a-aed8-8ec55f312f53">
+
 
 
 
